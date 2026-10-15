@@ -1,5 +1,4 @@
 library(hmcdm)
-# ??hmcdm
 # citation('hmcdm')
 
 library(hmcdm)
@@ -15,8 +14,7 @@ Qmat<-Q_matrix
 
 
 #fitting via Stan
-
-mod_mixture_wI_loaded <- cmdstan_model(exe_file = "C:/Users/steve/Dropbox/Apps/ShareLaTeX/stochastic matrix mixture/code/model_dina_hmm_mixture_wI.exe")
+mod_mixture_wI_loaded <- cmdstan_model(exe_file = "./code/model_dina_hmm_mixture_wI.exe")
 
 
 y <- all_data_array
@@ -64,7 +62,6 @@ data_list_mixture <- list(
 #   seed = 123
 # )
 # # #11797.0
-# # 
 # cmd_out<-mcmc_mixture_wI$summary(variables=c('slip','guess','p_00_1','p_11_1','p_00_2','p_11_2_free','ws','init_state'))
 # View(cmd_out)
 # 
@@ -90,8 +87,8 @@ View(fit_mixture_wI_map$summary(variables=c('slip','guess','p_00_1','p_11_1','p_
 
 #dina with general hmm
 #load compiled saved model
-# model_dina_hmm <- readRDS("C:/Users/steve/Dropbox/Apps/ShareLaTeX/stochastic matrix mixture/code/compiled_model_dina_hmm.rds")
-mod_dina_hmm_loaded <- cmdstan_model(exe_file = "C:/Users/steve/Dropbox/Apps/ShareLaTeX/stochastic matrix mixture/code/dina_hmm_stan.exe")
+# model_dina_hmm <- readRDS("./code/compiled_model_dina_hmm.rds")
+mod_dina_hmm_loaded <- cmdstan_model(exe_file = "./code/dina_hmm_stan.exe")
 
 data_list_hmm <- list(
   n = dim(y)[1],
@@ -115,7 +112,7 @@ AIC_hmm <- -2*lp_dina_hmm[1,2]+2*nparm_dina_hmm
 BIC_hmm <- -2*lp_dina_hmm[1,2]+log(nall)*nparm_dina_hmm
 
 #dina with independent transitions
-mod_dina_indep_trans_loaded <- cmdstan_model(exe_file = "C:/Users/steve/Dropbox/Apps/ShareLaTeX/stochastic matrix mixture/code/dina_hmm_indep_trans.exe")
+mod_dina_indep_trans_loaded <- cmdstan_model(exe_file = "./code/dina_hmm_indep_trans.exe")
 
 data_list_indep_trans <- list(
   n = dim(y)[1],
@@ -140,7 +137,7 @@ AIC_indep <- -2*lp_dina_indep_tran[1,2]+2*nparm_dina_indep_tran
 BIC_indep <- -2*lp_dina_indep_tran[1,2]+log(nall)*nparm_dina_indep_tran
 
 #dina with mixture of independent transitions and I
-mod_dina_indep_trans_pI_loaded <- cmdstan_model(exe_file = "C:/Users/steve/Dropbox/Apps/ShareLaTeX/stochastic matrix mixture/code/dina_hmm_indep_trans_pI.exe")
+mod_dina_indep_trans_pI_loaded <- cmdstan_model(exe_file = "./code/dina_hmm_indep_trans_pI.exe")
 
 fit_indep_tran_pI <- mod_dina_indep_trans_pI_loaded$optimize(
   data = data_list_indep_trans,
@@ -155,7 +152,7 @@ BIC_indep_pI<- -2*lp_dina_indep_tran_pI[1,2]+log(nall)*nparm_dina_indep_tran_pI
 View(fit_indep_tran_pI$summary(variables=c('slip','guess','p_00','p_11','ws','init_state')))
 
 #dina with mixture of independent transitions + monotonicity and I
-mod_dina_indep_trans_pI_monotone_loaded <- cmdstan_model(exe_file = "C:/Users/steve/Dropbox/Apps/ShareLaTeX/stochastic matrix mixture/code/dina_hmm_indep_trans_pI_monotone.exe")
+mod_dina_indep_trans_pI_monotone_loaded <- cmdstan_model(exe_file = "./code/dina_hmm_indep_trans_pI_monotone.exe")
 
 fit_indep_tran_pI_monotone <- mod_dina_indep_trans_pI_monotone_loaded$optimize(
   data = data_list_indep_trans,
@@ -170,7 +167,6 @@ BIC_indep_pI_monotone<- -2*lp_dina_indep_tran_pI_monotone[1,2]+log(nall)*nparm_d
 
 
 #dina with monotone A
-
 dina_hmm_fixed0s_stan<-"
 data {
   int<lower=1> n;     // number of persons
@@ -182,8 +178,6 @@ data {
   array[n, J, T] int<lower=0, upper=1> obs;
   array[two_pow_K, J] int<lower=0, upper=1> eta;
 }
-
-
 parameters {
   simplex[two_pow_K] init_state;
   vector<lower=0, upper=1>[J] slip;    // slipping parameters
@@ -273,7 +267,7 @@ final_stan_code <- sprintf(dina_hmm_fixed0s_stan,
 # 4. Save to a temporary file
 writeLines(final_stan_code, con = "dina_hmm_fixed0s.stan")
 
-# mod_dina_hmm_fixed0s <- cmdstan_model("dina_hmm_fixed0s.stan",dir = "C:/Users/steve/Dropbox/Apps/ShareLaTeX/stochastic matrix mixture/code/")
+# mod_dina_hmm_fixed0s <- cmdstan_model("dina_hmm_fixed0s.stan",dir = "./code/")
 
 library(cmdstanr)
 
@@ -340,7 +334,7 @@ final_stan_code <- sprintf(dina_hmm_fixed0s_stan,
 # 4. Save to a temporary file
 writeLines(final_stan_code, con = "dina_hmm_fixed0s.stan")
 
-# mod_dina_hmm_fixed0s2 <- cmdstan_model("dina_hmm_fixed0s.stan",dir = "C:/Users/steve/Dropbox/Apps/ShareLaTeX/stochastic matrix mixture/code/")
+# mod_dina_hmm_fixed0s2 <- cmdstan_model("dina_hmm_fixed0s.stan",dir = "./code/")
 
 fit_hmm_fixed0s2 <- mod_dina_hmm_fixed0s2$optimize(
   data = stan_data,
@@ -353,12 +347,7 @@ AIC_hmm_fixed0s2 <- -2*lp_dina_hmm_fixed0s2[1,2]+2*nparm_dina_hmm_fixed0s2
 BIC_hmm_fixed0s2 <- -2*lp_dina_hmm_fixed0s2[1,2]+log(N)*nparm_dina_hmm_fixed0s2
 
 
-
-
-
 ##create a table
-
-
 aics<-c(AIC_indep_pI_monotone,AIC_indep,AIC_indep_pI,AIC_indep_mixture,AIC_hmm_fixed0s2,AIC_hmm_fixed0s,AIC_hmm)
 bics<-c(BIC_indep_pI_monotone,BIC_indep,BIC_indep_pI,BIC_indep_mixture,BIC_hmm_fixed0s2,BIC_hmm_fixed0s,BIC_hmm)
 nparms<-c(nparm_dina_indep_tran_pI_monotone,nparm_dina_indep_tran,nparm_dina_indep_tran_pI,nparm_wI,nparm_dina_hmm_fixed0s2,nparm_dina_hmm_fixed0s,nparm_dina_hmm)
@@ -366,10 +355,9 @@ lps<- c(lp_dina_indep_tran_pI_monotone$estimate,lp_dina_indep_tran[1,2]$estimate
         lp_dina_hmm_fixed0s2$estimate,lp_dina_hmm_fixed0s$estimate,lp_dina_hmm[1,2]$estimate)
 tab_summary<- cbind(nparms,nparms-2*J-(two_pow_K-1),-2*lps,aics,bics)
 
-# load(file='C:/Users/steve/Dropbox/Apps/ShareLaTeX/stochastic matrix mixture/application/wang_etal_results030826.Rdata')
+# load(file='./application/wang_etal_results030826.Rdata')
 # save(fit_mixture_wI_map,fit_hmm,fit_indep_tran,fit_indep_tran_pI,tab_summary,
-#      fit_indep_tran_pI_monotone,fit_hmm_fixed0s2,fit_hmm_fixed0s,file='C:/Users/steve/Dropbox/Apps/ShareLaTeX/stochastic matrix mixture/application/wang_etal_results030826.Rdata')
-## load(file='C:/Users/steve/Dropbox/Apps/ShareLaTeX/stochastic matrix mixture/application/wang_etal_results.Rdata')#older file w/o monotone models 
+#      fit_indep_tran_pI_monotone,fit_hmm_fixed0s2,fit_hmm_fixed0s,file='./application/wang_etal_results030826.Rdata')
 
 library(xtable)
 rownames(tab_summary)<-c('$\\mathbf A_+(\\bm\\tau,\\omega)$','Independent','$\\mathbf A(\\bm\\tau,\\omega)$',
@@ -394,14 +382,3 @@ print(xtable(est_table,
       sanitize.text.function = function(x) x,include.rownames = T)
 
 fit_indep_tran_pI_monotone$summary(variables=c('ws') )
-
-# #old output
-# View(fit_indep_tran_pI$summary(variables=c('p_00','p_11','ws') ))
-# 
-# est_table<-cbind(fit_indep_tran_pI$summary(variables=c('p_00') ),fit_indep_tran_pI$summary(variables=c('p_11') ))[,-c(1,3)]
-# rownames(est_table)<-c('$90^\\circ$ $x$','$90^\\circ$ $y$','$180^\\circ$ $x$','$180^\\circ$ $y$')
-# colnames(est_table)<-c('$p_{00}$','$p_{11}$')
-# 
-# print(xtable(est_table,
-#              digits=rep(2,3)),hline.after=c(-1,0,nrow(est_table)),
-#       sanitize.text.function = function(x) x,include.rownames = T)
