@@ -1,5 +1,5 @@
 
-file_loc<-'C:/Users/steve/Dropbox/Apps/ShareLaTeX/stochastic matrix mixture/application/'
+file_loc<-'./application/'
 ScoreA<-as.matrix(read.table(paste0(file_loc,'ScoreA.txt')) )
 ScoreB<-as.matrix(read.table(paste0(file_loc,'ScoreB.txt')) )
 ScoreC<-as.matrix(read.table(paste0(file_loc,'ScoreC.txt')) )
@@ -15,7 +15,7 @@ Qmat<-as.matrix(read.table(paste0(file_loc,'Q.txt')) )
 
 #fitting via Stan
 
-mod_mixture_wI_loaded <- cmdstan_model(exe_file = "C:/Users/steve/Dropbox/Apps/ShareLaTeX/stochastic matrix mixture/code/model_dina_hmm_mixture_wI.exe")
+mod_mixture_wI_loaded <- cmdstan_model(exe_file = "./code/model_dina_hmm_mixture_wI.exe")
 
 
 
@@ -91,8 +91,8 @@ View(fit_mixture_wI_map$summary(variables=c('slip','guess','p_00_1','p_11_1','p_
 
 #dina with general hmm
 #load compiled saved model
-# model_dina_hmm <- readRDS("C:/Users/steve/Dropbox/Apps/ShareLaTeX/stochastic matrix mixture/code/compiled_model_dina_hmm.rds")
-mod_dina_hmm_loaded <- cmdstan_model(exe_file = "C:/Users/steve/Dropbox/Apps/ShareLaTeX/stochastic matrix mixture/code/dina_hmm_stan.exe")
+# model_dina_hmm <- readRDS("./code/compiled_model_dina_hmm.rds")
+mod_dina_hmm_loaded <- cmdstan_model(exe_file = "./code/dina_hmm_stan.exe")
 
 data_list_hmm <- list(
   n = dim(y)[1],
@@ -116,7 +116,7 @@ AIC_hmm <- -2*lp_dina_hmm[1,2]+2*nparm_dina_hmm
 BIC_hmm <- -2*lp_dina_hmm[1,2]+log(nall)*nparm_dina_hmm
 
 #dina with independent transitions
-mod_dina_indep_trans_loaded <- cmdstan_model(exe_file = "C:/Users/steve/Dropbox/Apps/ShareLaTeX/stochastic matrix mixture/code/dina_hmm_indep_trans.exe")
+mod_dina_indep_trans_loaded <- cmdstan_model(exe_file = "./code/dina_hmm_indep_trans.exe")
 
 data_list_indep_trans <- list(
   n = dim(y)[1],
@@ -141,7 +141,7 @@ AIC_indep <- -2*lp_dina_indep_tran[1,2]+2*nparm_dina_indep_tran
 BIC_indep <- -2*lp_dina_indep_tran[1,2]+log(nall)*nparm_dina_indep_tran
 
 #dina with mixture of independent transitions and I
-mod_dina_indep_trans_pI_loaded <- cmdstan_model(exe_file = "C:/Users/steve/Dropbox/Apps/ShareLaTeX/stochastic matrix mixture/code/dina_hmm_indep_trans_pI.exe")
+mod_dina_indep_trans_pI_loaded <- cmdstan_model(exe_file = "./code/dina_hmm_indep_trans_pI.exe")
 
 fit_indep_tran_pI <- mod_dina_indep_trans_pI_loaded$optimize(
   data = data_list_indep_trans,
@@ -159,7 +159,7 @@ View(fit_indep_tran_pI$summary(variables=c('slip','guess','p_00','p_11','ws','in
 
 
 #dina with mixture of independent transitions + monotonicity and I
-mod_dina_indep_trans_pI_monotone_loaded <- cmdstan_model(exe_file = "C:/Users/steve/Dropbox/Apps/ShareLaTeX/stochastic matrix mixture/code/dina_hmm_indep_trans_pI_monotone.exe")
+mod_dina_indep_trans_pI_monotone_loaded <- cmdstan_model(exe_file = "./code/dina_hmm_indep_trans_pI_monotone.exe")
 
 fit_indep_tran_pI_monotone <- mod_dina_indep_trans_pI_monotone_loaded$optimize(
   data = data_list_indep_trans,
@@ -277,7 +277,7 @@ final_stan_code <- sprintf(dina_hmm_fixed0s_stan,
 # 4. Save to a temporary file
 writeLines(final_stan_code, con = "dina_hmm_fixed0s.stan")
 
-# mod_dina_hmm_fixed0s <- cmdstan_model("dina_hmm_fixed0s.stan",dir = "C:/Users/steve/Dropbox/Apps/ShareLaTeX/stochastic matrix mixture/code/")
+# mod_dina_hmm_fixed0s <- cmdstan_model("dina_hmm_fixed0s.stan",dir = "./code/")
 
 # library(cmdstanr)
 
@@ -344,7 +344,7 @@ final_stan_code <- sprintf(dina_hmm_fixed0s_stan,
 # 4. Save to a temporary file
 writeLines(final_stan_code, con = "dina_hmm_fixed0s.stan")
 
-# mod_dina_hmm_fixed0s2 <- cmdstan_model("dina_hmm_fixed0s.stan",dir = "C:/Users/steve/Dropbox/Apps/ShareLaTeX/stochastic matrix mixture/code/")
+# mod_dina_hmm_fixed0s2 <- cmdstan_model("dina_hmm_fixed0s.stan",dir = "./code/")
 
 fit_hmm_fixed0s2 <- mod_dina_hmm_fixed0s2$optimize(
   data = stan_data,
@@ -375,10 +375,8 @@ tab_summary<- cbind(nparms,nparms-2*J-(two_pow_K-1),-2*lps,aics,bics)
 
 
 # save(fit_mixture_wI_map,fit_hmm,fit_indep_tran,fit_indep_tran_pI,tab_summary,
-#      fit_indep_tran_pI_monotone,fit_hmm_fixed0s2,fit_hmm_fixed0s,
-#      file='C:/Users/steve/Dropbox/Apps/ShareLaTeX/stochastic matrix mixture/application/tang_zhang_results030826.Rdata')
-# load(file='C:/Users/steve/Dropbox/Apps/ShareLaTeX/stochastic matrix mixture/application/tang_zhang_results.Rdata')
-# load(file='C:/Users/steve/Dropbox/Apps/ShareLaTeX/stochastic matrix mixture/application/tang_zhang_results030826.Rdata')
+#      fit_indep_tran_pI_monotone,fit_hmm_fixed0s2,fit_hmm_fixed0s,file='./application/tang_zhang_results030826.Rdata')
+# load(file='./application/tang_zhang_results030826.Rdata')
 
 library(xtable)
 rownames(tab_summary)<-c('$\\mathbf A_+(\\bm\\tau,\\omega)$','Independent','$\\mathbf A(\\bm\\tau,\\omega)$',
@@ -394,24 +392,10 @@ which.min(bics)
 
 
 est_table<-cbind(fit_indep_tran_pI_monotone$summary(variables=c('p_00') ),1)[,-c(1)]
-rownames(est_table)<-c('Rational Numbers','Related Concepts of Rational Numbers','Axis',
-                       'Addition and Subtract','Multiplication and Division')
+rownames(est_table)<-c('Rational Numbers','Related Concepts of Rational Numbers','Axis','Addition and Subtract','Multiplication and Division')
 colnames(est_table)<-c('$p_{00}$','$p_{11}$')
 
-print(xtable(est_table,
-             digits=c(rep(2,2),0)),hline.after=c(-1,0,nrow(est_table)),
+print(xtable(est_table,digits=c(rep(2,2),0)),hline.after=c(-1,0,nrow(est_table)),
       sanitize.text.function = function(x) x,include.rownames = T)
 fit_indep_tran_pI_monotone$summary(variables=c('ws') )
 
-
-# #old output
-# est_table<-cbind(fit_indep_tran_pI$summary(variables=c('p_00') ),fit_indep_tran_pI$summary(variables=c('p_11') ))[,-c(1,3)]
-# rownames(est_table)<-c('Rational Numbers','Related Concepts of Rational Numbers','Axis',
-#                        'Addition and Subtract','Multiplication and Division')
-# colnames(est_table)<-c('$p_{00}$','$p_{11}$')
-# 
-# print(xtable(est_table,
-#              digits=rep(2,3)),hline.after=c(-1,0,nrow(est_table)),
-#       sanitize.text.function = function(x) x,include.rownames = T)
-# 
-# fit_indep_tran_pI$summary(variables=c('ws') )
